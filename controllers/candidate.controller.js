@@ -2,101 +2,105 @@
 const Joi = require('joi');
 const models = require('../models')
 // MODELS
-const Position = models.Position
-// CREATE USER
+const Candidate = models.Candidate
+// CREATE CANDIDATE
 const Index = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // current page number
     const limit = parseInt(req.query.limit) || 10; // number of items per page
     const offset = (page - 1) * limit; // offset of the first item to return
 
-    const position = await Position.findAndCountAll({
+    const candidate = await Candidate.findAndCountAll({
         limit,
         offset,
     });
-    const totalPages = Math.ceil(position.count / limit); // total number of pages
+    const totalPages = Math.ceil(candidate.count / limit); // total number of pages
     return res.status(200).send({
-        data: position.rows,
+        data: candidate.rows,
         page,
         limit,
         totalPages,
-        totalCount: position.count,
+        totalCount: candidate.count,
     });
 }
+
 const Show = async (req, res) => {
     const id = req.params.id
-    const user = await Position.findByPk(id);
-    return res.status(200).send(user);
+    const candidate = await Candidate.findByPk(id);
+    return res.status(200).send(candidate);
 }
 const Store = async (req, res) => {
     try {
         const schema = Joi.object({
-            name: Joi.string().max(100).required(),
-            description: Joi.string().required(),
-            maxVotes: Joi.required(),
-            priority: Joi.required(),
+            firstName: Joi.string().max(100).required(),
+            lastName: Joi.string().required(),
+            photo: Joi.required(),
+            positionId: Joi.required(),
         });
+        const { firstName, lastName, photo, positionId } = req.body
         const { error } = schema.validate(req.body);
         if (error) return res.status(400).send({ message: error.details[0].message });
-        const existingPosition = await Position.findOne({ where: { name: req.body.name } });
-        if (existingPosition) return res.status(409).send({ message: `Position ${req.body.name} already exists` });
+        const existingCandidate = await Candidate.findOne({ where: { firstName, lastName, positionId } });
+        if (existingCandidate) return res.status(409).send({ message: `Candidate ${firstName} ${lastName} already exists` });
 
-        const newPosition = await Position.create({
-            name: req.body.name,
-            description: req.body.description,
-            maxVotes: req.body.maxVotes,
-            priority: req.body.priority,
+        const newCandidate = await Candidate.create({
+            firstName,
+            lastName,
+            photo,
+            positionId,
         });
         res.status(200).send({
-            message: `Position ${req.body.name} created successfully`,
-            position: newPosition
+            message: `Candidate ${firstName} ${lastName}  created successfully`,
+            position: newCandidate
         });
     } catch (error) {
-        res.status(500).send({ message: 'Error creating Position', error });
+        res.status(500).send({ message: 'Error creating Candidate', error });
     }
 }
 
 const Edit = async (req, res) => {
     const id = req.params.id
-    // try {
-    const schema = Joi.object({
-        name: Joi.string().max(100).required(),
-        description: Joi.string().required(),
-        maxVotes: Joi.required(),
-        priority: Joi.required(),
-    });
-    const { error } = schema.validate(req.body);
-    if (error) return res.status(400).send({ message: error.details[0].message });
-    const user = await Position.findByPk(id);
-    if (!user) return res.status(404).send({ message: `Position with id ${id} not found` });
-    const editedPosition = await Position.update({
-        name: req.body.name,
-        description: req.body.description,
-        maxVotes: req.body.maxVotes,
-        priority: req.body.priority,
-    }, {
-        where: {
-            id
-        }
-    });
-    return res.status(200).send({
-        message: `Position ${req.body.name} edited successfully`,
-    });
-    // } catch (error) {
-    //     res.status(500).send({ message: 'Error editing Position', error });
-    // }
+    try {
+        const schema = Joi.object({
+            firstName: Joi.string().max(100).required(),
+            lastName: Joi.string().required(),
+            photo: Joi.required(),
+            positionId: Joi.required(),
+        });
+        const { error } = schema.validate(req.body);
+
+        if (error) return res.status(400).send({ message: error.details[0].message });
+        const { firstName, lastName, photo, positionId } = req.body
+        const user = await Candidate.findByPk(id);
+        if (!user) return res.status(404).send({ message: `Candidate with id ${id} not found` });
+        await Candidate.update({
+            firstName,
+            lastName,
+            photo,
+            positionId,
+        }, {
+            where: {
+                id
+            }
+        });
+        return res.status(200).send({
+            message: `Candidate ${firstName} ${lastName} edited successfully`,
+        });
+    } catch (error) {
+        res.status(500).send({ message: 'Error editing Candidate', error });
+    }
 }
 
 const Destroy = async (req, res) => {
     try {
         const id = req.params.id
-        await Position.destroy({
+        await Candidate.destroy({
             where: {
                 id
             }
         });
-        return res.status(200).send({ message: 'Position Deleted Successfully' });
+        return res.status(200).send({ message: 'Candidate Deleted Successfully' });
     } catch (error) {
-        return res.status(500).send({ message: 'Error deleting position' });
+        return res.status(500).send({ message: 'Error deleting Candidate' });
     }
 
 
