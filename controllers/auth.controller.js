@@ -60,7 +60,7 @@ const Login = async (req, res) => {
         return res.status(200).send({
             'msg': `User ${user.fullName} authenticated successfully`,
             'token': token,
-            "user": { "id": user.id, "name": user.fullName, "phone": user.phone, "email": user.email, "isActive": true  },
+            "user": { "id": user.id, "name": user.fullName, "phone": user.phone,"type": user.userType, "email": user.email, "isActive": true  },
         });
     } catch (error) {
         console.error(error);
