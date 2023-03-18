@@ -57,7 +57,7 @@ const Store = async(req,res) => {
 
 const Edit = async(req, res) => {
     const id = req.params.id
-    // try {
+    try {
         const schema = Joi.object({
             name: Joi.string().max(100).required(),
             description: Joi.string().required(),
@@ -80,9 +80,9 @@ const Edit = async(req, res) => {
         return res.status(200).send({
             message: `Position ${req.body.name} edited successfully`,
         });
-    // } catch (error) {
-    //     res.status(500).send({ message: 'Error editing Position', error });
-    // }
+    } catch (error) {
+        res.status(500).send({ message: 'Error editing Position', error });
+    }
 }
 
 const Destroy = async (req, res)=>{
