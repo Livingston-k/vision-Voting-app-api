@@ -21,6 +21,10 @@ module.exports = {
       positionId: {
         type: Sequelize.INTEGER
       },
+      deletedAt: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -29,6 +33,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }, {
+      paranoid: true
     });
   },
   async down(queryInterface, Sequelize) {

@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     priority: DataTypes.STRING
   }, {
     sequelize,
+    paranoid: true,
     modelName: 'Position',
   });
   return Position;
