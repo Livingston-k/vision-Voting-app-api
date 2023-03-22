@@ -2,6 +2,7 @@ const express = require('express')
 const helmet = require('helmet');
 const app = express()
 const path = require('path');
+const cors = require('cors');
 const ApiRoutes = require('./routes')
 require("dotenv").config();
 
@@ -25,6 +26,10 @@ app.use(helmet.noSniff());
 app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
 
 // MIDDLEWARES
+app.use(cors({
+  origin: 'http://localhost:8080' // replace with your frontend URL
+}));
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'static')));
