@@ -5,7 +5,6 @@ const path = require('path');
 const cors = require('cors');
 const ApiRoutes = require('./routes')
 require("dotenv").config();
-const cors = require('cors');
 
 // Enable Content Security Policy (CSP)
 app.use(

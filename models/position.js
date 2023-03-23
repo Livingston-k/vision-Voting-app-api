@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Position.hasMany(models.Candidate, {
+        foreignKey: 'positionId', // the name of the foreign key column in the Candidate table
+        as: 'candidates' // the name of the association, used to retrieve associated Candidate records
+      });
     }
   }
   Position.init({
