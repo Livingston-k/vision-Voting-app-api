@@ -12,7 +12,6 @@ const Register = async (req, res) => {
     try {
         const schema = Joi.object({
             fullName: Joi.string().max(100).required(),
-            phone: Joi.string().max(100).required(),
             email: Joi.string().email().max(100).required(),
             password: Joi.string().min(6).required(),
             confirm_password: Joi.string().min(6).required(),
@@ -28,7 +27,7 @@ const Register = async (req, res) => {
 
         if (existingUser) return res.status(409).send({ message: 'User with this email already exists' });
         const code = await RandomCodeHelper.generateCode(8)
-        const newUser = await User.create({ code, fullName, email, phone, image, countryId, password: hashedPassword, });
+        const newUser = await User.create({ code, fullName, email, image, countryId, password: hashedPassword, });
         res.status(200).send({
             message: `User ${newUser.fullName} registered successfully`,
             user: {
@@ -36,7 +35,6 @@ const Register = async (req, res) => {
                 'fullName': newUser.fullName,
                 'email': newUser.email,
                 'isActive': newUser.isActive,
-                'phone': newUser.phone,
             }
         });
     } catch (error) {
@@ -67,8 +65,15 @@ const Login = async (req, res) => {
         return res.status(500).send({ 'msg': 'Server error', });
     }
 };
+const Authenticated_user = async (req, res) => {
+    const user = req.user
+   return res.status(200).send({
+            "user": { "id": user.id, "name": user.fullName, "phone": user.phone,"type": user.userType, "email": user.email, "isActive": true  },
+        });
+}
 
 module.exports = {
     Register,
     Login,
+    Authenticated_user
 }
