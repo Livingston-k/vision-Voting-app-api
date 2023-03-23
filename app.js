@@ -5,6 +5,7 @@ const path = require('path');
 const cors = require('cors');
 const ApiRoutes = require('./routes')
 require("dotenv").config();
+const cors = require('cors');
 
 // Enable Content Security Policy (CSP)
 app.use(
@@ -27,9 +28,8 @@ app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }
 
 // MIDDLEWARES
 app.use(cors({
-  origin: 'http://localhost:8080' // replace with your frontend URL
+  origin: 'http://localhost:8080'
 }));
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'static')));
