@@ -3,6 +3,7 @@ const Joi = require('joi');
 const models = require('../models')
 // MODELS
 const Candidate = models.Candidate
+const Position = models.Position
 // CREATE CANDIDATE
 const Index = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // current page number
@@ -12,6 +13,9 @@ const Index = async (req, res) => {
     const candidate = await Candidate.findAndCountAll({
         limit,
         offset,
+         include: {
+    model: Position,
+         }
     });
     const totalPages = Math.ceil(candidate.count / limit); // total number of pages
     return res.status(200).send({
