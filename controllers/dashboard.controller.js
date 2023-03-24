@@ -3,15 +3,15 @@ const Joi = require('joi');
 const models = require('../models')
 // MODELS
 const User = models.User
-const Position = models.Position
+const Category = models.Category
 const Candidate = models.Candidate
 // CREATE USER
 const Index = async(req, res) => {
     const user = await User.count()
-    const positions = await Position.count()
+    const categories = await Category.count()
     const candidates = await Candidate.count()
     const votes = 0
-    return res.status(200).send({user,positions,candidates,votes});
+    return res.status(200).send({user,categories,candidates,votes});
 
 }
 

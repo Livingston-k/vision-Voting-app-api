@@ -2,31 +2,34 @@
 const Joi = require('joi');
 const models = require('../models')
 // MODELS
-const Position = models.Position
+const Category = models.Category
 // CREATE USER
 const Index = async(req, res) => {
     const page = parseInt(req.query.page) || 1; // current page number
     const limit = parseInt(req.query.limit) || 10; // number of items per page
     const offset = (page - 1) * limit; // offset of the first item to return
 
-    const position = await Position.findAndCountAll({
+    const category = await Category.findAndCountAll({
         limit,
         offset,
+         order: [['id', 'DESC']]
     });
-    const totalPages = Math.ceil(position.count / limit); // total number of pages
+    const totalPages = Math.ceil(category.count / limit); // total number of pages
     return res.status(200).send({
-        data: position.rows,
+        data: category.rows,
         page,
         limit,
         totalPages,
-        totalCount: position.count,
+        totalCount: category.count,
     });
 }
+
 const Show = async(req, res) => {
     const id = req.params.id
-    const user = await Position.findByPk(id);
-    return res.status(200).send(user);
+    const category = await Category.findByPk(id);
+    return res.status(200).send(category);
 }
+
 const Store = async(req,res) => {
     try {
         const schema = Joi.object({
@@ -37,21 +40,21 @@ const Store = async(req,res) => {
         });
         const { error } = schema.validate(req.body);
         if (error) return res.status(400).send({ message: error.details[0].message });
-        const existingPosition = await Position.findOne({ where: { name: req.body.name } });
-        if (existingPosition) return res.status(409).send({ message: `Position ${req.body.name} already exists` });
+        const existingCategory = await Category.findOne({ where: { name: req.body.name } });
+        if (existingCategory) return res.status(409).send({ message: `Category ${req.body.name} already exists` });
 
-    const newPosition = await Position.create({
+    const newCategory = await Category.create({
             name: req.body.name,
             description: req.body.description,
             maxVotes: req.body.maxVotes,
             priority: req.body.priority,
         });
         res.status(200).send({
-            message: `Position ${req.body.name} created successfully`,
-            position: newPosition
+            message: `Category ${req.body.name} created successfully`,
+            Category: newCategory
         });
     } catch (error) {
-        res.status(500).send({ message: 'Error creating Position', error });
+        res.status(500).send({ message: 'Error creating Category', error });
     }
 }
 
@@ -66,9 +69,9 @@ const Edit = async(req, res) => {
         });
         const { error } = schema.validate(req.body);
         if (error) return res.status(400).send({ message: error.details[0].message });
-        const user = await Position.findByPk(id);
-        if (!user) return res.status(404).send({ message: `Position with id ${id} not found` });
-        const editedPosition = await Position.update({
+        const user = await Category.findByPk(id);
+        if (!user) return res.status(404).send({ message: `Category with id ${id} not found` });
+        const editedCategory = await Category.update({
             name: req.body.name,
             description: req.body.description,
             maxVotes: req.body.maxVotes,
@@ -78,24 +81,24 @@ const Edit = async(req, res) => {
                 id
             }});
         return res.status(200).send({
-            message: `Position ${req.body.name} edited successfully`,
+            message: `Category ${req.body.name} edited successfully`,
         });
     } catch (error) {
-        res.status(500).send({ message: 'Error editing Position', error });
+        res.status(500).send({ message: 'Error editing Category', error });
     }
 }
 
 const Destroy = async (req, res)=>{
     try {
         const id = req.params.id
-        await Position.destroy({
+        await Category.destroy({
             where: {
                 id
             }
         });
-        return res.status(200).send({ message: 'Position Deleted Successfully' });
+        return res.status(200).send({ message: 'Category Deleted Successfully' });
     } catch (error) {
-        return res.status(500).send({ message: 'Error deleting position' });
+        return res.status(500).send({ message: 'Error deleting Category' });
     }
   
 

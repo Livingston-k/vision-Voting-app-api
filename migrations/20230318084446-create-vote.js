@@ -15,7 +15,7 @@ module.exports = {
       candidateId: {
         type: Sequelize.INTEGER
       },
-      positionId: {
+      categoryId: {
         type: Sequelize.INTEGER
       },
       deletedAt: {
@@ -33,8 +33,14 @@ module.exports = {
     }, {
       paranoid: true
     });
+     await queryInterface.addIndex('Votes', ['categoryId']);
+     await queryInterface.addIndex('Votes', ['userId']);
+     await queryInterface.addIndex('Votes', ['candidateId']);
   },
   async down(queryInterface, Sequelize) {
+     await queryInterface.removeIndex('Votes', ['categoryId']);
+     await queryInterface.removeIndex('Votes', ['userId']);
+     await queryInterface.removeIndex('Votes', ['candidateId']);
     await queryInterface.dropTable('Votes');
   }
 };
