@@ -10,18 +10,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-   Candidate.belongsTo(models.Position, { foreignKey: 'positionId' });
+   Candidate.belongsTo(models.Category, { foreignKey: 'categoryId' });
     }
   }
   Candidate.init({
     firstName: DataTypes.STRING,
     lastName: DataTypes.TEXT,
     photo: DataTypes.STRING,
-    positionId: DataTypes.INTEGER
+    categoryId: DataTypes.INTEGER
   }, {
     sequelize,
     paranoid: true,
     modelName: 'Candidate',
+      indexes: [
+      {
+        unique: false,
+        fields: ['categoryId'],
+      },
+    ],
   });
   return Candidate;
 };

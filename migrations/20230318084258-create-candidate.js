@@ -18,7 +18,7 @@ module.exports = {
       photo: {
         type: Sequelize.STRING
       },
-      positionId: {
+      categoryId: {
         type: Sequelize.INTEGER
       },
       deletedAt: {
@@ -36,8 +36,10 @@ module.exports = {
     }, {
       paranoid: true
     });
+     await queryInterface.addIndex('Candidates', ['categoryId']);
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeIndex('Candidates', ['categoryId']);
     await queryInterface.dropTable('Candidates');
   }
 };

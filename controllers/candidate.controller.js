@@ -3,7 +3,7 @@ const Joi = require('joi');
 const models = require('../models')
 // MODELS
 const Candidate = models.Candidate
-const Position = models.Position
+const Category = models.Category
 // CREATE CANDIDATE
 const Index = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // current page number
@@ -14,7 +14,7 @@ const Index = async (req, res) => {
         limit,
         offset,
          include: {
-    model: Position,
+    model: Category,
          }
     });
     const totalPages = Math.ceil(candidate.count / limit); // total number of pages
@@ -38,23 +38,23 @@ const Store = async (req, res) => {
             firstName: Joi.string().max(100).required(),
             lastName: Joi.string().required(),
             photo: Joi.required(),
-            positionId: Joi.required(),
+            categoryId: Joi.required(),
         });
-        const { firstName, lastName, photo, positionId } = req.body
+        const { firstName, lastName, photo, categoryId } = req.body
         const { error } = schema.validate(req.body);
         if (error) return res.status(400).send({ message: error.details[0].message });
-        const existingCandidate = await Candidate.findOne({ where: { firstName, lastName, positionId } });
+        const existingCandidate = await Candidate.findOne({ where: { firstName, lastName, categoryId } });
         if (existingCandidate) return res.status(409).send({ message: `Candidate ${firstName} ${lastName} already exists` });
 
         const newCandidate = await Candidate.create({
             firstName,
             lastName,
-            photo,
-            positionId,
+            photo:'default.png',
+            categoryId,
         });
         res.status(200).send({
             message: `Candidate ${firstName} ${lastName}  created successfully`,
-            position: newCandidate
+            candidate: newCandidate
         });
     } catch (error) {
         res.status(500).send({ message: 'Error creating Candidate', error });
@@ -68,19 +68,19 @@ const Edit = async (req, res) => {
             firstName: Joi.string().max(100).required(),
             lastName: Joi.string().required(),
             photo: Joi.required(),
-            positionId: Joi.required(),
+            categoryId: Joi.required(),
         });
         const { error } = schema.validate(req.body);
 
         if (error) return res.status(400).send({ message: error.details[0].message });
-        const { firstName, lastName, photo, positionId } = req.body
+        const { firstName, lastName, photo, categoryId } = req.body
         const user = await Candidate.findByPk(id);
         if (!user) return res.status(404).send({ message: `Candidate with id ${id} not found` });
         await Candidate.update({
             firstName,
             lastName,
             photo,
-            positionId,
+            categoryId,
         }, {
             where: {
                 id

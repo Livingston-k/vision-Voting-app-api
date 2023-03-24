@@ -10,17 +10,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+       Vote.belongsTo(models.Candidate, { foreignKey: 'candidateId' });
+       Vote.belongsTo(models.Category, { foreignKey: 'categoryId' });
     }
   }
   Vote.init({
     userId: DataTypes.INTEGER,
     candidateId: DataTypes.INTEGER,
-    positionId: DataTypes.INTEGER
+    categoryId: DataTypes.INTEGER
   }, {
     sequelize,
     paranoid: true,
     modelName: 'Vote',
+     indexes: [
+      {
+        unique: false,
+        fields: ['userId','candidateId','categoryId'],
+      },
+    ],
   });
   return Vote;
 };
