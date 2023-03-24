@@ -10,7 +10,7 @@ const checkAuth = async (req, res, next) => {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] }); // verify token and set algorithm
         const user = await User.findOne({ where: { email: decodedToken.email, id: decodedToken.user_id } });
         if (!user) return res.status(401).send({ msg: 'Your token is invalid' });
-        if (user.userType == 1) return res.status(403).send({ msg: 'This api should be called by user not admin' });
+        if (!user.userType) return res.status(403).send({ msg: 'This api should be called by user not admin' });
             req.user = {
                 id: user.id,
                 fullName: user.fullName,
