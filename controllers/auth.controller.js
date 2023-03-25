@@ -1,5 +1,5 @@
 'use strict';
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 const Joi = require('joi');
 const models = require('../models')
 const AuthTokenHelper = require('../helpers/tokenGenerator')
@@ -22,7 +22,7 @@ const Register = async (req, res) => {
 
         const image = "default.png";
         const { fullName, email, phone, countryId, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await argon2.hash(password);
         const existingUser = await User.findOne({ where: { email } });
 
         if (existingUser) return res.status(409).send({ message: 'User with this email already exists' });
@@ -52,7 +52,8 @@ const Login = async (req, res) => {
         if (error) return res.status(400).send({ 'msg': error.details[0].message });
         const user = await User.findOne({ where: { email: req.body.email } });
         if (!user) return res.status(404).send({ 'msg': 'Invalid credentials' });
-        const match = await bcrypt.compare(req.body.password, user.password);
+        const match = await await argon2.verify(user.password, req.body.password);
+
         if (!match) return res.status(404).send({ 'msg': 'Invalid credentials' });
         const token = await AuthTokenHelper.GenerateToken(user)
         return res.status(200).send({
