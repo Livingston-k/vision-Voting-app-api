@@ -40,7 +40,6 @@ const userVotes = async (req, res) => {
   ],
   order: [['id', 'DESC']],
 });
- return res.status(200).send(votes)
     const totalPages = Math.ceil(votes.count / limit); // total number of pages
     return res.status(200).send({
         data: votes.rows,

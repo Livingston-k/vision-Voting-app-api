@@ -13,10 +13,12 @@ const Index = async (req, res) => {
     const candidate = await Candidate.findAndCountAll({
         limit,
         offset,
-         include: {
-    model: Category,
-         }
+        include: {
+            model: Category,
+        },
+        order: [['id', 'DESC']]
     });
+
     const totalPages = Math.ceil(candidate.count / limit); // total number of pages
     return res.status(200).send({
         data: candidate.rows,

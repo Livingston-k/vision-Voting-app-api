@@ -5,6 +5,7 @@ const categories = require("./categories.routes");
 const candidates = require("./candidates.routes");
 const dashboard = require("./dashboard.routes");
 const vote = require("./vote.routes");
+const polling = require("./polling.routes");
 const router = express.Router();
 
 router.use('/auth', auth);
@@ -12,4 +13,5 @@ router.use('/categories', categories);
 router.use('/candidates', candidates);
 router.use('/dashboard', dashboard);
 router.use('/vote', vote);
+router.use('/polling', polling);
 module.exports = router;
